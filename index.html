@@ -10,66 +10,111 @@
     <script src="https://cdn.jsdelivr.net/npm/keccak256@latest/keccak256.js"></script>
     <style>
         body {
-            font-family: "Blinker", sans-serif;
-        }
+        font-family: "Blinker", sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        .login-pf-page {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #dde6f6;
-        }
+    .login-pf-page {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #dde6f6;
+        padding: 1rem;
+    }
 
+    .login-pf-page-header {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Ajustes de tamaño y márgenes en pantallas grandes */
+    .card-pf {
+        background: white;
+        padding: 2rem;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+        transition: box-shadow 0.3s;
+        margin: 1rem;
+    }
+
+    .card-pf:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .pf-c-button {
+        width: 100%;
+        padding: 0.75rem;
+        color: white;
+        background-color: #2d58a7 !important;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: transform 0.1s;
+        margin-top: 1rem;
+    }
+
+    .pf-c-button:active {
+        transform: scale(0.95);
+    }
+
+    .pf-c-button:hover {
+        background-color: #cadcee;
+    }
+
+    .output {
+        margin-top: 1rem;
+        font-family: monospace;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    /* Media query para pantallas pequeñas */
+    @media (max-width: 768px) {
         .login-pf-page-header {
-            text-align: center;
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .card-pf {
-            margin-bottom: 5% !important;
-            background: white;
-            padding: 2rem;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
-            transition: box-shadow 0.3s;
-        }
-
-        .card-pf:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            max-width: 90%;
         }
 
         .pf-c-button {
-            width: 100%;
-            padding: 0.75rem;
-            color: white;
-            background-color: #2d58a7 !important;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: transform 0.1s;
-            margin-top: 1rem;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Media query para pantallas muy pequeñas */
+    @media (max-width: 480px) {
+        .login-pf-page-header {
+            font-size: 1.25rem;
         }
 
-        .pf-c-button:active {
-            transform: scale(0.95);
+        .card-pf {
+            padding: 1rem;
+            max-width: 100%;
         }
 
-        .pf-c-button:hover {
-            background-color: #cadcee;
+        .pf-c-button {
+            padding: 0.5rem;
+            font-size: 0.8rem;
         }
 
         .output {
-            margin-top: 1rem;
-            font-family: monospace;
-            white-space: pre-wrap;
+            font-size: 0.9rem;
         }
+    }
     </style>
 </head>
 <body>
@@ -94,9 +139,9 @@
         const didKey = await generateDidKey(publicKeyHex)
 
         document.getElementById("didKeyOutput").innerText =
-                "Private Key: " + privateKeyHex + "\n" +
-                "Public Key : " + publicKeyHex + "\n" +
-                "did:key: " + didKey;
+                "Private Key: " + privateKeyHex + "\n\n" +
+                "Public Key: " + publicKeyHex + "\n\n" +
+                "DID: " + didKey;
     }
 
     async function generateP256KeyPair() {
@@ -205,8 +250,8 @@
         const privateKeyHex = "0x" + privateKey.toString(16)
 
         document.getElementById("ethereumOutput").innerText =
-                "Private Key: " + privateKeyHex + "\n" +
-                "Ethereum Address : " + ethereumAddress + "\n";
+                "Private Key: " + privateKeyHex + "\n\n" +
+                "Ethereum Address: " + ethereumAddress;
     }
 
     function generateSecp256k1PrivateKey(){
