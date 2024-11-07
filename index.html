@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOME Key Generation</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Blinker:wght@400;700&display=swap">
+    <script src="https://unpkg.com/bn.js@4.11.8/lib/bn.js" type="text/javascript"></script>
+    <script src="https://unpkg.com/@lionello/secp256k1-js@1.1.0/src/secp256k1.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/keccak256@latest/keccak256.js"></script>
+    <style>
+        body {
+            font-family: "Blinker", sans-serif;
+        }
+
+        .login-pf-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #dde6f6;
+        }
+
+        .login-pf-page-header {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+        }
+
+        .card-pf {
+            margin-bottom: 5% !important;
+            background: white;
+            padding: 2rem;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            transition: box-shadow 0.3s;
+        }
+
+        .card-pf:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .pf-c-button {
+            width: 100%;
+            padding: 0.75rem;
+            color: white;
+            background-color: #2d58a7 !important;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.1s;
+            margin-top: 1rem;
+        }
+
+        .pf-c-button:active {
+            transform: scale(0.95);
+        }
+
+        .pf-c-button:hover {
+            background-color: #cadcee;
+        }
+
+        .output {
+            margin-top: 1rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+<div class="login-pf-page">
+    <div class="login-pf-page-header">DOME Key Generator
+    </div>
+    <div class="card-pf">
+        <button class="pf-c-button" onclick="generateP256()">Generate DID:KEY</button>
+        <div id="didKeyOutput" class="output"></div>
+        <button class="pf-c-button" onclick="generateSecp256k1()">Generate Ethereum Address</button>
+        <div id="ethereumOutput" class="output"></div>
+    </div>
+</div>
+<script>
+    async function generateP256() {
+        const keyPair = await generateP256KeyPair();
+
+        const privateKeyHex = await generateP256PrivateKeyHex(keyPair);
+
+        const publicKeyHex = await generateP256PublicKeyHex(keyPair)
+
+        const didKey = await generateDidKey(publicKeyHex)
+
+        document.getElementById("didKeyOutput").innerText =
+                "Private Key: " + privateKeyHex + "\n" +
+                "Public Key : " + publicKeyHex + "\n" +
+                "did:key: " + didKey;
+    }
+
+    async function generateP256KeyPair() {
+        return await window.crypto.subtle.generateKey(
+          {
+            name: "ECDSA",
+            namedCurve: "P-256"
+          },
+          true,
+          ["sign", "verify"]
+        );
+    }
+
+    async function generateP256PrivateKeyHex(keyPair){
+        const privateKeyPkcs8 = await window.crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
+
+        const privateKeyPkcs8Bytes = new Uint8Array(privateKeyPkcs8);
+
+        const privateKeyPkcs8Hex = bytesToHexString(privateKeyPkcs8Bytes);
+        console.log("Private Key P-256 (Secp256r1) PKCS#8 (HEX): ", privateKeyPkcs8Hex);
+
+        const privateKeyBytes = privateKeyPkcs8Bytes.slice(36, 36 + 32);
+
+        const privateKeyHexBytes = bytesToHexString(privateKeyBytes);
+
+        return privateKeyHexBytes;
+    }
+
+    async function generateP256PublicKeyHex(keyPair){
+        const publicKey = await window.crypto.subtle.exportKey("raw", keyPair.publicKey);
+
+        const publicKeyBytes = new Uint8Array(publicKey);
+
+        return bytesToHexString(publicKeyBytes)
+    }
+
+    async function generateDidKey(publicKeyHex){
+        const publicKeyHexWithout0xAndPrefix = publicKeyHex.slice(4)
+
+        const publicKeyX = publicKeyHexWithout0xAndPrefix.slice(0, 64)
+
+        const publicKeyY = publicKeyHexWithout0xAndPrefix.slice(64)
+        const isPublicKeyYEven = isHexNumberEven(publicKeyY)
+
+        const compressedPublicKeyX = (isPublicKeyYEven ? "02" : "03") + publicKeyX;
+
+        const multicodecHex = "8024" + compressedPublicKeyX
+
+        const multicodecBytes = multicodecHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
+        var MAP = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+        const multicodecBase58 = base58encode(multicodecBytes, MAP);
+
+        return 'did:key:z' + multicodecBase58;
+    }
+
+    function bytesToHexString(bytesToTransform){
+        return `0x${Array.from(bytesToTransform).map(b => b.toString(16).padStart(2, '0')).join('')}`;
+    }
+
+    function isHexNumberEven(hexNumber){
+        const decimalNumber = BigInt("0x" + hexNumber)
+        const stringNumber = decimalNumber.toString()
+
+        const lastNumPosition = stringNumber.length - 1
+        const lastNumDecimal = parseInt(stringNumber[lastNumPosition])
+
+        const isEven = lastNumDecimal % 2 === 0;
+        return isEven;
+    }
+
+    // https://gist.github.com/diafygi/90a3e80ca1c2793220e5/
+    function base58encode(
+    B,            //Uint8Array raw byte input
+    A             //Base58 characters (i.e. "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")
+    ) {
+        var d = [],   //the array for storing the stream of base58 digits
+            s = "",   //the result string variable that will be returned
+            i,        //the iterator variable for the byte input
+            j,        //the iterator variable for the base58 digit array (d)
+            c,        //the carry amount variable that is used to overflow from the current base58 digit to the next base58 digit
+            n;        //a temporary placeholder variable for the current base58 digit
+        for(i in B) { //loop through each byte in the input stream
+            j = 0,                           //reset the base58 digit iterator
+            c = B[i];                        //set the initial carry amount equal to the current byte amount
+            s += c || s.length ^ i ? "" : 1; //prepend the result string with a "1" (0 in base58) if the byte stream is zero and non-zero bytes haven't been seen yet (to ensure correct decode length)
+            while(j in d || c) {             //start looping through the digits until there are no more digits and no carry amount
+                n = d[j];                    //set the placeholder for the current base58 digit
+                n = n ? n * 256 + c : c;     //shift the current base58 one byte and add the carry amount (or just add the carry amount if this is a new digit)
+                c = n / 58 | 0;              //find the new carry amount (floored integer of current digit divided by 58)
+                d[j] = n % 58;               //reset the current base58 digit to the remainder (the carry amount will pass on the overflow)
+                j++                          //iterate to the next base58 digit
+            }
+        }
+        while(j--)        //since the base58 digits are backwards, loop through them in reverse order
+            s += A[d[j]]; //lookup the character associated with each base58 digit
+        return s          //return the final base58 string
+    }
+
+    // To test it: https://www.rfctools.com/ethereum-address-test-tool/
+    function generateSecp256k1(){
+        const privateKey = generateSecp256k1PrivateKey()
+
+        const ethereumAddress = generateEthereumAddressFromPrivateKey(privateKey)
+
+        const privateKeyHexWithout0x = privateKey.toString(16)
+        const privateKeyHex = "0x" + privateKey.toString(16)
+
+        document.getElementById("ethereumOutput").innerText =
+                "Private Key: " + privateKeyHex + "\n" +
+                "Ethereum Address : " + ethereumAddress + "\n";
+    }
+
+    function generateSecp256k1PrivateKey(){
+        const privateKeyBuf = window.crypto.getRandomValues(new Uint8Array(32))
+        return Secp256k1.uint256(privateKeyBuf, 16)
+    }
+
+    function generateEthereumAddressFromPrivateKey(privateKey){
+        const publicKey = Secp256k1.generatePublicKeyFromPrivateKeyData(privateKey)
+        const publicKeyXHex = Secp256k1.uint256(publicKey.x, 16).toString(16)
+        const publicKeyYHex = Secp256k1.uint256(publicKey.y, 16).toString(16)
+        const publicKeyHexWithout0xAndPreffix = publicKeyXHex + publicKeyYHex
+
+        console.log("Public Key Secp256k1 (HEX): ", "0x04" + publicKeyHexWithout0xAndPreffix);
+
+        var address = generateEthereumAddressFromPublicKey(publicKeyHexWithout0xAndPreffix)
+        console.log("address: ", address);
+
+        var addressChecksum = calculateEthereumAddressChecksum(address)
+
+        return "0x" + addressChecksum
+    }
+
+    // https://stackoverflow.com/a/73606400
+    function generateEthereumAddressFromPublicKey(publicKeyHexWithout0xAndPreffix){
+        console.log("publicKeyHexWithout0xAndPreffix: ", publicKeyHexWithout0xAndPreffix);
+
+        var hashXY = keccak256("0x" + publicKeyHexWithout0xAndPreffix);
+        console.log("hashXY: ", hashXY);
+
+        console.log("hashXY: ", hashXY.toString('hex'));
+        return hashXY.subarray(-20).toString('hex').toLowerCase();
+    }
+
+    // https://stackoverflow.com/a/73606400
+    function calculateEthereumAddressChecksum(address){
+        var addressHash = keccak256(address).toString('hex');
+        var addressChecksum = '';
+        for (var i = 0; i < address.length; i++){
+            if (parseInt(addressHash[i], 16) > 7) {
+                addressChecksum += address[i].toUpperCase();
+            } else {
+                addressChecksum += address[i];
+            }
+        }
+
+        return addressChecksum
+    }
+
+</script>
+</body>
+</html>
+
+
