@@ -122,9 +122,9 @@
     <div class="login-pf-page-header">DOME Key Generator
     </div>
     <div class="card-pf">
-        <button class="pf-c-button" onclick="generateP256()">Generate DID:KEY</button>
+        <button class="pf-c-button" onclick="generateP256()">Generate Desmos Keys</button>
         <div id="didKeyOutput" class="output"></div>
-        <button class="pf-c-button" onclick="generateSecp256k1()">Generate Ethereum Address</button>
+        <button class="pf-c-button" onclick="generateSecp256k1()">Generate DLT Keys</button>
         <div id="ethereumOutput" class="output"></div>
     </div>
 </div>
@@ -139,9 +139,9 @@
         const didKey = await generateDidKey(publicKeyHex)
 
         document.getElementById("didKeyOutput").innerText =
-                "Private Key: " + privateKeyHex + "\n\n" +
-                "Public Key: " + publicKeyHex + "\n\n" +
-                "DID: " + didKey;
+                "Desmos Private Key: " + privateKeyHex + "\n\n" +
+                "Desmos Public Key: " + publicKeyHex + "\n\n" +
+                "Desmos DID Key: " + didKey;
     }
 
     async function generateP256KeyPair() {
@@ -250,8 +250,8 @@
         const privateKeyHex = "0x" + privateKey.toString(16)
 
         document.getElementById("ethereumOutput").innerText =
-                "Private Key: " + privateKeyHex + "\n\n" +
-                "Ethereum Address: " + ethereumAddress;
+                "DLT Private Key: " + privateKeyHex + "\n\n" +
+                "DLT Address: " + ethereumAddress;
     }
 
     function generateSecp256k1PrivateKey(){
