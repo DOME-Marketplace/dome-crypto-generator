@@ -73,9 +73,9 @@
     .output {
     margin-top: 1rem;
     font-family: monospace;
-    display: flex;
+    /*display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: center;*/
     width: 100%;
     }
 
@@ -165,21 +165,21 @@
             <h2>Desmos keys</h2>
             <div>
                 <div class="output">
-                    <p style="margin-right: 10px;">Desmos Private Key</p>
+                    <h3 style="margin-right: 10px;">Private Key</h3>
                     <div class="key-box" style="flex-grow: 1;">
                         <p id="desmosPrivateKeyValue"></p>
                         <button class="copy-btn" onclick="copyToClipboard('desmosPrivateKeyValue')">Copy</button>
                     </div>
                 </div>
                 <div class="output">
-                    <p style="margin-right: 10px;">Desmos Public Key</p>
+                    <h3 style="margin-right: 10px;">Public Key</h3>
                     <div class="key-box" style="flex-grow: 1;">
                         <p id="desmosPublicKeyValue"></p>
                         <button class="copy-btn" onclick="copyToClipboard('desmosPublicKeyValue')">Copy</button>
                     </div>
                 </div>
                 <div class="output">
-                    <p style="margin-right: 10px;">Desmos DID</p>
+                    <h3 style="margin-right: 10px;">DID</h3>
                     <div class="key-box" style="flex-grow: 1;">
                         <p id="desmosDidKeyValue"></p>
                         <button class="copy-btn" onclick="copyToClipboard('desmosDidKeyValue')">Copy</button>
@@ -188,21 +188,21 @@
                 <hr>
                 <h2>DLT keys</h2>
                 <div class="output">
-                    <p style="margin-right: 10px;">DLT Private Key</p>
+                    <h3 style="margin-right: 10px;">Private Key</h3>
                     <div class="key-box" style="flex-grow: 1;">
                         <p id="dltPrivateKeyValue"></p>
                         <button class="copy-btn" onclick="copyToClipboard('dltPrivateKeyValue')">Copy</button>
                     </div>
                 </div>
                 <div class="output">
-                    <p style="margin-right: 10px;">DLT Public Key</p>
+                    <h3 style="margin-right: 10px;">Public Key</h3>
                     <div class="key-box" style="flex-grow: 1;">
                         <p id="dltAddressValue"></p>
                         <button class="copy-btn" onclick="copyToClipboard('dltAddressValue')">Copy</button>
                     </div>
                 </div>
                 <div class="output">
-                    <p style="margin-right: 10px;">ISS DID</p>
+                    <h3 style="margin-right: 10px;">ISS DID</h3>
                     <div class="key-box" style="flex-grow: 1;">
                         <p id="issValue"></p>
                         <button class="copy-btn" onclick="copyToClipboard('issValue')">Copy</button>
@@ -232,7 +232,7 @@
         document.getElementById("desmosPrivateKeyValue").innerText = privateKeyHex;
         document.getElementById("desmosPublicKeyValue").innerText = publicKeyHex;
         document.getElementById("desmosDidKeyValue").innerText = didKey;
-        document.getElementById("issValue").innerText = iss;
+        document.getElementById("issValue").innerText = "0x" + iss;
     }
 
     async function generateP256KeyPair() {
