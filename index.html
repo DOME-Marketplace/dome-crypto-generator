@@ -16,6 +16,26 @@
         box-sizing: border-box;
     }
 
+    .disclaimer {
+      background-color: #e0e0e0;
+      color: #333;
+      padding: 20px;
+      text-align: justify;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      width: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      box-sizing: border-box;
+    }
+
+    .disclaimer p {
+      margin: 0;
+      margin-left: 5rem;
+      margin-right: 5rem;
+    }
+
     .login-pf-page {
         display: flex;
         flex-direction: column;
@@ -149,6 +169,18 @@
     </style>
 </head>
 <body>
+<header>
+    <div class="disclaimer">
+        <p>In our service, the security and privacy of your data are our top priority.
+            That's why we have designed our system in such a way that all keys are
+            generated entirely on the client side, meaning on your own device.
+            This means they are neither sent nor stored on any server, ensuring that no one but you
+            have access to them.
+            Thanks to this approach, your keys remain under your
+            exclusive control at all times, protecting your information with the highest
+            level of privacy.</p>
+    </div>
+</header>
 <div class="login-pf-page">
     <div class="login-pf-page-header">DOME Access Node Key Generator
     </div>
