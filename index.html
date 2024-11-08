@@ -73,8 +73,6 @@
     .output {
         margin-top: 1rem;
         font-family: monospace;
-        white-space: pre-wrap;
-        word-wrap: break-word;
     }
 
     .key-box {
@@ -84,6 +82,13 @@
         border-radius: 5px;
         background-color: #f9f9f9;
         position: relative;
+        margin-top: 1rem;
+        font-family: monospace;
+        word-wrap: break-word;
+    }
+
+    .key-box p {
+        margin: 0;
     }
 
     .copy-btn {
@@ -91,15 +96,15 @@
         top: 10px;
         right: 10px;
         cursor: pointer;
-        background-color: #007bff;
-        color: white;
+        background-color: #e0e0e0;
+        color: #333;
         border: none;
         padding: 5px 10px;
         border-radius: 5px;
     }
 
     .copy-btn:hover {
-        background-color: #0056b3;
+        background-color: #b0b0b0;
     }
 
     /* Media query para pantallas pequeñas */
@@ -149,7 +154,7 @@
     <div class="card-pf">
         <button class="pf-c-button" onclick="generateP256(); document.getElementById('didKeyOutput').style.display='block'">Generate Desmos Keys</button>
         <div id="didKeyOutput" class="output" style="display: none;">
-            <p id="privateKeyTitle">Private Key: </p>
+            <p id="privateKeyTitle">Private Key</p>
             <div id="keyBox1" class="key-box">
                 <p id="privateKeyValue"></p>
                 <button class="copy-btn" onclick="copyToClipboard('privateKeyValue')">Copy</button>
