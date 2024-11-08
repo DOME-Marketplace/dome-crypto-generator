@@ -77,6 +77,31 @@
         word-wrap: break-word;
     }
 
+    .key-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        position: relative;
+    }
+
+    .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    .copy-btn:hover {
+        background-color: #0056b3;
+    }
+
     /* Media query para pantallas pequeñas */
     @media (max-width: 768px) {
         .login-pf-page-header {
@@ -119,16 +144,27 @@
 </head>
 <body>
 <div class="login-pf-page">
-    <div class="login-pf-page-header">DOME Key Generator
+    <div class="login-pf-page-header">DOME Access Node Key Generator
     </div>
     <div class="card-pf">
-        <button class="pf-c-button" onclick="generateP256()">Generate Desmos Keys</button>
-        <div id="didKeyOutput" class="output"></div>
+        <button class="pf-c-button" onclick="generateP256(); document.getElementById('didKeyOutput').style.display='block'">Generate Desmos Keys</button>
+        <div id="didKeyOutput" class="output" style="display: none;">
+            <p id="privateKeyTitle">Private Key: </p>
+            <div id="keyBox1" class="key-box">
+                <p id="privateKeyValue"></p>
+                <button class="copy-btn" onclick="copyToClipboard('privateKeyValue')">Copy</button>
+            </div>
+        </div>
         <button class="pf-c-button" onclick="generateSecp256k1()">Generate DLT Keys</button>
         <div id="ethereumOutput" class="output"></div>
     </div>
 </div>
 <script>
+    function copyToClipboard(elementId) {
+        const text = document.getElementById(elementId).innerText;
+        navigator.clipboard.writeText(text);
+    }
+
     async function generateP256() {
         const keyPair = await generateP256KeyPair();
 
@@ -138,10 +174,7 @@
 
         const didKey = await generateDidKey(publicKeyHex)
 
-        document.getElementById("didKeyOutput").innerText =
-                "Desmos Private Key: " + privateKeyHex + "\n\n" +
-                "Desmos Public Key: " + publicKeyHex + "\n\n" +
-                "Desmos DID Key: " + didKey;
+        document.getElementById("privateKeyValue").innerText = privateKeyHex;
     }
 
     async function generateP256KeyPair() {
@@ -250,8 +283,9 @@
         const privateKeyHex = "0x" + privateKey.toString(16)
 
         document.getElementById("ethereumOutput").innerText =
-                "DLT Private Key: " + privateKeyHex + "\n\n" +
-                "DLT Address: " + ethereumAddress;
+                "Private Key: " + privateKeyHex + "\n\n" +
+                "DLT Address: " + ethereumAddress  + "\n\n" +
+                "ISS: ";
     }
 
     function generateSecp256k1PrivateKey(){
