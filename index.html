@@ -33,7 +33,6 @@
         margin-bottom: 1.5rem;
     }
 
-    /* Ajustes de tamaño y márgenes en pantallas grandes */
     .card-pf {
         background: white;
         padding: 2rem;
@@ -72,12 +71,12 @@
     }
 
     .output {
-        margin-top: 1rem;
-        font-family: monospace;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        width: 100%;
+    margin-top: 1rem;
+    font-family: monospace;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
     }
 
     .key-box {
@@ -87,37 +86,33 @@
         border-radius: 5px;
         background-color: #f9f9f9;
         position: relative;
-        margin-top: 1rem;
         font-family: monospace;
         word-wrap: break-word;
         flex-grow: 1;
+        display: flex;
+        justify-content: space-between;
     }
 
     .key-box p {
         margin: 0;
-        max-width: 550px;  /* Establece un tamaño máximo para el párrafo */
-        white-space: normal;  /* Permite que el texto se divida en varias líneas */
-        word-wrap: break-word;  /* Fuerza el ajuste de palabras largas */
-}
+        max-width: 550px;
+        white-space: normal;
+        word-wrap: break-word;
     }
 
     .copy-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        cursor: pointer;
-        background-color: #e0e0e0;
-        color: #333;
-        border: none;
-        padding: 5px 10px;
-        border-radius: 5px;
+    cursor: pointer;
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
     }
 
     .copy-btn:hover {
         background-color: #b0b0b0;
     }
 
-    /* Media query para pantallas pequeñas */
     @media (max-width: 768px) {
         .login-pf-page-header {
             font-size: 1.5rem;
@@ -135,7 +130,6 @@
         }
     }
 
-    /* Media query para pantallas muy pequeñas */
     @media (max-width: 480px) {
         .login-pf-page-header {
             font-size: 1.25rem;
