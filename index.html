@@ -163,7 +163,8 @@
     </div>
     <div class="card-pf">
         <button class="pf-c-button"
-                onclick="generateP256(); document.getElementById('didKeyOutput').style.display='block'">Generate Desmos
+                onclick="generateP256(); generateSecp256k1();document.getElementById('didKeyOutput').style.display='block'">
+            Generate
             Keys
         </button>
         <div id="didKeyOutput" style="display: none;">
@@ -189,30 +190,22 @@
                         <button class="copy-btn" onclick="copyToClipboard('desmosDidKeyValue')">Copy</button>
                     </div>
                 </div>
-            </div>
-        </div>
-        <button class="pf-c-button"
-                onclick="generateSecp256k1(); document.getElementById('ethereumOutput').style.display='block'">Generate
-            DLT Keys
-        </button>
-        <div id="ethereumOutput" style="display: none;">
-            <div>
                 <div class="output">
-                    <p style="margin-right: 10px;">Private Key</p>
+                    <p style="margin-right: 10px;">DLT Private Key</p>
                     <div class="key-box" style="flex-grow: 1;">
                         <p id="dltPrivateKeyValue"></p>
                         <button class="copy-btn" onclick="copyToClipboard('dltPrivateKeyValue')">Copy</button>
                     </div>
                 </div>
                 <div class="output">
-                    <p style="margin-right: 10px;">Public Key</p>
+                    <p style="margin-right: 10px;">DLT Public Key</p>
                     <div class="key-box" style="flex-grow: 1;">
                         <p id="dltAddressValue"></p>
                         <button class="copy-btn" onclick="copyToClipboard('dltAddressValue')">Copy</button>
                     </div>
                 </div>
                 <div class="output">
-                    <p style="margin-right: 10px;">DID</p>
+                    <p style="margin-right: 10px;">ISS DID</p>
                     <div class="key-box" style="flex-grow: 1;">
                         <p id="issValue"></p>
                         <button class="copy-btn" onclick="copyToClipboard('issValue')">Copy</button>
@@ -237,9 +230,12 @@
 
         const didKey = await generateDidKey(publicKeyHex)
 
+        const iss = await sha256(didKey)
+
         document.getElementById("desmosPrivateKeyValue").innerText = privateKeyHex;
         document.getElementById("desmosPublicKeyValue").innerText = publicKeyHex;
         document.getElementById("desmosDidKeyValue").innerText = didKey;
+        document.getElementById("issValue").innerText = iss;
     }
 
     async function generateP256KeyPair() {
@@ -338,6 +334,22 @@
         return s          //return the final base58 string
     }
 
+    // https://stackoverflow.com/a/48161723
+    async function sha256(message) {
+        // encode as UTF-8
+        const msgBuffer = new TextEncoder().encode(message);
+
+        // hash the message
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+
+        // convert ArrayBuffer to Array
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+        // convert bytes to hex string
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return hashHex;
+    }
+
     // To test it: https://www.rfctools.com/ethereum-address-test-tool/
     function generateSecp256k1(){
         const privateKey = generateSecp256k1PrivateKey()
@@ -349,7 +361,6 @@
 
         document.getElementById("dltPrivateKeyValue").innerText = privateKeyHex;
         document.getElementById("dltAddressValue").innerText = ethereumAddress;
-        document.getElementById("issValue").innerText = "";
     }
 
     function generateSecp256k1PrivateKey(){
