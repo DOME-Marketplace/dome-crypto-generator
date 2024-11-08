@@ -43,6 +43,7 @@
         width: 100%;
         transition: box-shadow 0.3s;
         margin: 1rem;
+        min-width: 650px;
     }
 
     .card-pf:hover {
@@ -73,6 +74,10 @@
     .output {
         margin-top: 1rem;
         font-family: monospace;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
     }
 
     .key-box {
@@ -85,10 +90,15 @@
         margin-top: 1rem;
         font-family: monospace;
         word-wrap: break-word;
+        flex-grow: 1;
     }
 
     .key-box p {
         margin: 0;
+        max-width: 550px;  /* Establece un tamaño máximo para el párrafo */
+        white-space: normal;  /* Permite que el texto se divida en varias líneas */
+        word-wrap: break-word;  /* Fuerza el ajuste de palabras largas */
+}
     }
 
     .copy-btn {
@@ -152,16 +162,64 @@
     <div class="login-pf-page-header">DOME Access Node Key Generator
     </div>
     <div class="card-pf">
-        <button class="pf-c-button" onclick="generateP256(); document.getElementById('didKeyOutput').style.display='block'">Generate Desmos Keys</button>
-        <div id="didKeyOutput" class="output" style="display: none;">
-            <p id="privateKeyTitle">Private Key</p>
-            <div id="keyBox1" class="key-box">
-                <p id="privateKeyValue"></p>
-                <button class="copy-btn" onclick="copyToClipboard('privateKeyValue')">Copy</button>
+        <button class="pf-c-button"
+                onclick="generateP256(); document.getElementById('didKeyOutput').style.display='block'">Generate Desmos
+            Keys
+        </button>
+        <div id="didKeyOutput" style="display: none;">
+            <div>
+                <div class="output">
+                    <p style="margin-right: 10px;">Private Key</p>
+                    <div class="key-box" style="flex-grow: 1;">
+                        <p id="desmosPrivateKeyValue"></p>
+                        <button class="copy-btn" onclick="copyToClipboard('desmosPrivateKeyValue')">Copy</button>
+                    </div>
+                </div>
+                <div class="output">
+                    <p style="margin-right: 10px;">Public Key</p>
+                    <div class="key-box" style="flex-grow: 1;">
+                        <p id="desmosPublicKeyValue"></p>
+                        <button class="copy-btn" onclick="copyToClipboard('desmosPublicKeyValue')">Copy</button>
+                    </div>
+                </div>
+                <div class="output">
+                    <p style="margin-right: 10px;">DID</p>
+                    <div class="key-box" style="flex-grow: 1;">
+                        <p id="desmosDidKeyValue"></p>
+                        <button class="copy-btn" onclick="copyToClipboard('desmosDidKeyValue')">Copy</button>
+                    </div>
+                </div>
             </div>
         </div>
-        <button class="pf-c-button" onclick="generateSecp256k1()">Generate DLT Keys</button>
-        <div id="ethereumOutput" class="output"></div>
+        <button class="pf-c-button"
+                onclick="generateSecp256k1(); document.getElementById('ethereumOutput').style.display='block'">Generate
+            DLT Keys
+        </button>
+        <div id="ethereumOutput" style="display: none;">
+            <div>
+                <div class="output">
+                    <p style="margin-right: 10px;">Private Key</p>
+                    <div class="key-box" style="flex-grow: 1;">
+                        <p id="dltPrivateKeyValue"></p>
+                        <button class="copy-btn" onclick="copyToClipboard('dltPrivateKeyValue')">Copy</button>
+                    </div>
+                </div>
+                <div class="output">
+                    <p style="margin-right: 10px;">Public Key</p>
+                    <div class="key-box" style="flex-grow: 1;">
+                        <p id="dltAddressValue"></p>
+                        <button class="copy-btn" onclick="copyToClipboard('dltAddressValue')">Copy</button>
+                    </div>
+                </div>
+                <div class="output">
+                    <p style="margin-right: 10px;">DID</p>
+                    <div class="key-box" style="flex-grow: 1;">
+                        <p id="issValue"></p>
+                        <button class="copy-btn" onclick="copyToClipboard('issValue')">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <script>
@@ -179,7 +237,9 @@
 
         const didKey = await generateDidKey(publicKeyHex)
 
-        document.getElementById("privateKeyValue").innerText = privateKeyHex;
+        document.getElementById("desmosPrivateKeyValue").innerText = privateKeyHex;
+        document.getElementById("desmosPublicKeyValue").innerText = publicKeyHex;
+        document.getElementById("desmosDidKeyValue").innerText = didKey;
     }
 
     async function generateP256KeyPair() {
@@ -287,10 +347,9 @@
         const privateKeyHexWithout0x = privateKey.toString(16)
         const privateKeyHex = "0x" + privateKey.toString(16)
 
-        document.getElementById("ethereumOutput").innerText =
-                "Private Key: " + privateKeyHex + "\n\n" +
-                "DLT Address: " + ethereumAddress  + "\n\n" +
-                "ISS: ";
+        document.getElementById("dltPrivateKeyValue").innerText = privateKeyHex;
+        document.getElementById("dltAddressValue").innerText = ethereumAddress;
+        document.getElementById("issValue").innerText = "";
     }
 
     function generateSecp256k1PrivateKey(){
