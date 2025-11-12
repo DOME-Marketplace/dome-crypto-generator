@@ -97,6 +97,7 @@
     }
 
     .key-box {
+        align-items: center;
         border: 1px solid #ccc;
         padding: 10px;
         margin: 10px 0;
@@ -118,16 +119,16 @@
     }
 
     .input-text {
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 5px;
-        background-color: #f9f9f9;
+        background: transparent;
+        margin: 0;
+        max-width: 550px;
+        white-space: normal;
+        word-wrap: break-word;
+        border: none;
         font-family: monospace;
         width: 100%;
         box-sizing: border-box;
     }
-
 
     .copy-btn {
     cursor: pointer;
@@ -218,9 +219,12 @@
                     <button class="copy-btn" onclick="copyToClipboard('dltAddressValue')">Copy</button>
                 </div>
             </div>
-            <h2>Manual DID Key</h2>
+            <h2>ISS</h2>
             <div class="output">
-                <input type="text" class="input-text" id="manualDidInput" placeholder="Enter your DID Key manually">
+                <div class="key-box" style="flex-grow: 1;">
+                    <input type="text" class="input-text" id="manualDidInput" placeholder="Enter here your Organization Identifier and click Generate ISS button">
+                    <button class="copy-btn" onclick="clearDidInput()">Clear</button>
+                </div>
                 <button class="pf-c-button" onclick="generateIssFromDid()">Generate ISS</button>
             </div>
             <div class="output" id="issOutput" style="display: none;">
@@ -239,6 +243,18 @@
     </footer>
 </div>
 <script>
+    function clearDidInput() {
+        const input = document.getElementById("manualDidInput");
+        const issOutput = document.getElementById("issOutput");
+        const issValue = document.getElementById("issValue");
+
+        input.value = "";
+        input.disabled = false;
+
+        issOutput.style.display = "none";
+        issValue.innerText = "";
+    }
+
     function copyToClipboard(elementId) {
         const text = document.getElementById(elementId).innerText;
         navigator.clipboard.writeText(text);
@@ -247,7 +263,7 @@
     async function generateIssFromDid() {
         const didKey = document.getElementById("manualDidInput").value.trim();
         if (!didKey) {
-          alert("Please enter a DID Key first.");
+          alert("Please enter a Organization Identifier first.");
           return;
         } else {
             document.getElementById('issOutput').style.display='block';
