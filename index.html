@@ -198,12 +198,16 @@
     <div class="login-pf-page-header">DOME Access Node Key Generator
     </div>
     <div class="card-pf">
+        <div class="key-box" style="flex-grow: 1;">
+            <input type="text" class="input-text" id="manualDidInput" placeholder="Enter here your Did key and click Generate ISS button">
+            <button class="copy-btn" onclick="clearDidInput()">Clear</button>
+        </div>
         <button class="pf-c-button"
-                onclick="generateSecp256k1();document.getElementById('didKeyOutput').style.display='block'">
+                onclick="generateSecp256k1();">
             Generate
             Keys
         </button>
-        <div id="didKeyOutput" style="display: none;">
+        <div id="keysOutput" style="display: none;">
             <h2>DLT keys</h2>
             <div class="output">
                 <h3 style="margin-right: 10px;">Private Key</h3>
@@ -219,16 +223,8 @@
                     <button class="copy-btn" onclick="copyToClipboard('dltAddressValue')">Copy</button>
                 </div>
             </div>
-            <h2>ISS</h2>
             <div class="output">
-                <div class="key-box" style="flex-grow: 1;">
-                    <input type="text" class="input-text" id="manualDidInput" placeholder="Enter here your Organization Identifier and click Generate ISS button">
-                    <button class="copy-btn" onclick="clearDidInput()">Clear</button>
-                </div>
-                <button class="pf-c-button" onclick="generateIssFromDid()">Generate ISS</button>
-            </div>
-            <div class="output" id="issOutput" style="display: none;">
-                <h3>ISS</h3>
+                <h3 style="margin-right: 10px;">ISS</h3>
                 <div class="key-box">
                     <p id="issValue"></p>
                     <button class="copy-btn" onclick="copyToClipboard('issValue')">Copy</button>
@@ -243,55 +239,18 @@
     </footer>
 </div>
 <script>
-    function clearDidInput() {
-        const input = document.getElementById("manualDidInput");
-        const issOutput = document.getElementById("issOutput");
-        const issValue = document.getElementById("issValue");
-
-        input.value = "";
-        input.disabled = false;
-
-        issOutput.style.display = "none";
-        issValue.innerText = "";
-    }
-
     function copyToClipboard(elementId) {
         const text = document.getElementById(elementId).innerText;
         navigator.clipboard.writeText(text);
     }
 
-    async function generateIssFromDid() {
-        const didKey = document.getElementById("manualDidInput").value.trim();
-        if (!didKey) {
-          alert("Please enter a Organization Identifier first.");
-          return;
-        } else {
-            document.getElementById('issOutput').style.display='block';
-            document.getElementById("manualDidInput").disabled = true;
-        }
-        const iss = await sha256(didKey)
-
-        document.getElementById("issValue").innerText = "0x" + iss;
-    }
-
-    // https://stackoverflow.com/a/48161723
-    async function sha256(message) {
-        // encode as UTF-8
-        const msgBuffer = new TextEncoder().encode(message);
-
-        // hash the message
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-
-        // convert ArrayBuffer to Array
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-
-        // convert bytes to hex string
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        return hashHex;
-    }
-
     // To test it: https://www.rfctools.com/ethereum-address-test-tool/
-    function generateSecp256k1(){
+    async function generateSecp256k1(){
+        const didKey = document.getElementById("manualDidInput").value.trim();
+        if (isDidKeyEmpty(didKey)) {
+            return;
+        }
+
         const privateKey = generateSecp256k1PrivateKey()
 
         const ethereumAddress = generateEthereumAddressFromPrivateKey(privateKey)
@@ -299,8 +258,13 @@
         const privateKeyHexWithout0x = privateKey.toString(16)
         const privateKeyHex = "0x" + privateKey.toString(16)
 
+        const iss = await generateIssFromDidKey(didKey);
+
         document.getElementById("dltPrivateKeyValue").innerText = privateKeyHex;
         document.getElementById("dltAddressValue").innerText = ethereumAddress;
+        document.getElementById("issValue").innerText = "0x" + iss;
+
+        document.getElementById('keysOutput').style.display='block'
     }
 
     function generateSecp256k1PrivateKey(){
@@ -350,6 +314,43 @@
         return addressChecksum
     }
 
+    async function generateIssFromDidKey(didKey) {
+        return await sha256(didKey)
+    }
+
+    function isDidKeyEmpty(didKey) {
+        if (!didKey) {
+          alert("Please enter a Did Key first.");
+          return true;
+        }
+        return false;
+    }
+
+    // https://stackoverflow.com/a/48161723
+    async function sha256(message) {
+        // encode as UTF-8
+        const msgBuffer = new TextEncoder().encode(message);
+
+        // hash the message
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+
+        // convert ArrayBuffer to Array
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+        // convert bytes to hex string
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return hashHex;
+    }
+
+    function clearDidInput() {
+        const input = document.getElementById("manualDidInput");
+        const issValue = document.getElementById("issValue");
+
+        input.value = "";
+        input.disabled = false;
+
+        issValue.innerText = "";
+    }
 </script>
 </body>
 </html>
