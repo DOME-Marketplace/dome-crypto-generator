@@ -199,14 +199,9 @@
     </div>
     <div class="card-pf">
         <div class="key-box" style="flex-grow: 1;">
-            <input type="text" class="input-text" id="manualDidInput" placeholder="Enter here your Did key and click Generate ISS button">
-            <button class="copy-btn" onclick="clearDidInput()">Clear</button>
+            <input type="text" class="input-text" id="manualDidInput" placeholder="Enter here your Did key and click Generate Keys button">
         </div>
-        <button class="pf-c-button"
-                onclick="generateSecp256k1();">
-            Generate
-            Keys
-        </button>
+        <button class="pf-c-button" onclick="generateSecp256k1();">Generate Keys</button>
         <div id="keysOutput" style="display: none;">
             <h2>DLT keys</h2>
             <div class="output">
@@ -250,6 +245,8 @@
         if (isDidKeyEmpty(didKey)) {
             return;
         }
+
+        document.getElementById('manualDidInput').disabled='true';
 
         const privateKey = generateSecp256k1PrivateKey()
 
@@ -340,16 +337,6 @@
         // convert bytes to hex string
         const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         return hashHex;
-    }
-
-    function clearDidInput() {
-        const input = document.getElementById("manualDidInput");
-        const issValue = document.getElementById("issValue");
-
-        input.value = "";
-        input.disabled = false;
-
-        issValue.innerText = "";
     }
 </script>
 </body>
