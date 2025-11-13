@@ -199,7 +199,7 @@
     </div>
     <div class="card-pf">
         <div class="key-box" style="flex-grow: 1;">
-            <input type="text" class="input-text" id="manualDidInput" placeholder="Enter here your Did key and click Generate Keys button">
+            <input type="text" class="input-text" id="manualDidInput" placeholder="Enter here your DID Key and click Generate Keys button">
         </div>
         <button class="pf-c-button" onclick="generateSecp256k1();">Generate Keys</button>
         <div id="keysOutput" style="display: none;">
@@ -317,7 +317,7 @@
 
     function isDidKeyEmpty(didKey) {
         if (!didKey) {
-          alert("Please enter a Did Key first.");
+          alert("Please enter a DID Key first.");
           return true;
         }
         return false;
