@@ -275,10 +275,7 @@
         const publicKeyYHex = Secp256k1.uint256(publicKey.y, 16).toString(16)
         const publicKeyHexWithout0xAndPreffix = publicKeyXHex + publicKeyYHex
 
-        console.log("Public Key Secp256k1 (HEX): ", "0x04" + publicKeyHexWithout0xAndPreffix);
-
         var address = generateEthereumAddressFromPublicKey(publicKeyHexWithout0xAndPreffix)
-        console.log("address: ", address);
 
         var addressChecksum = calculateEthereumAddressChecksum(address)
 
@@ -287,12 +284,7 @@
 
     // https://stackoverflow.com/a/73606400
     function generateEthereumAddressFromPublicKey(publicKeyHexWithout0xAndPreffix){
-        console.log("publicKeyHexWithout0xAndPreffix: ", publicKeyHexWithout0xAndPreffix);
-
         var hashXY = keccak256("0x" + publicKeyHexWithout0xAndPreffix);
-        console.log("hashXY: ", hashXY);
-
-        console.log("hashXY: ", hashXY.toString('hex'));
         return hashXY.subarray(-20).toString('hex').toLowerCase();
     }
 
