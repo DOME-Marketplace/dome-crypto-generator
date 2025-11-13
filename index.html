@@ -237,7 +237,7 @@
 <script>
     function copyToClipboard(elementId) {
         const text = document.getElementById(elementId).innerText;
-        navigator.clipboard.writeText(text);
+        navigator.clipboard.writeText(text).then(() => alert('Copied to clipboard!'));
     }
 
     // To test it: https://www.rfctools.com/ethereum-address-test-tool/
