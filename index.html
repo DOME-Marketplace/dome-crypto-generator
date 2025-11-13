@@ -198,23 +198,23 @@
     <div class="login-pf-page-header">DOME Access Node Key Generator
     </div>
     <div class="card-pf">
-        <div class="key-box" style="flex-grow: 1;">
-            <label for="manualDidInput" class="visually-hidden">DID Key</label>
-            <input type="text" class="input-text" id="manualDidInput" placeholder="Enter here your DID Key and click Generate Keys button">
+        <div class="key-box">
+            <label for="didInput" class="visually-hidden">DID Key</label>
+            <input type="text" class="input-text" id="didInput" placeholder="Enter here your DID Key and click Generate Keys button">
         </div>
         <button class="pf-c-button" onclick="generateSecp256k1();">Generate Keys</button>
         <div id="keysOutput" style="display: none;">
             <h2>DLT keys</h2>
             <div class="output">
                 <h3 style="margin-right: 10px;">Private Key</h3>
-                <div class="key-box" style="flex-grow: 1;">
+                <div class="key-box">
                     <p id="dltPrivateKeyValue"></p>
                     <button class="copy-btn" onclick="copyToClipboard('dltPrivateKeyValue')">Copy</button>
                 </div>
             </div>
             <div class="output">
                 <h3 style="margin-right: 10px;">DLT Address</h3>
-                <div class="key-box" style="flex-grow: 1;">
+                <div class="key-box">
                     <p id="dltAddressValue"></p>
                     <button class="copy-btn" onclick="copyToClipboard('dltAddressValue')">Copy</button>
                 </div>
@@ -242,12 +242,13 @@
 
     // To test it: https://www.rfctools.com/ethereum-address-test-tool/
     async function generateSecp256k1(){
-        const didKey = document.getElementById("manualDidInput").value.trim();
+        const didInput = document.getElementById("didInput");
+        const didKey = didInput.value.trim();
         if (isDidKeyEmpty(didKey)) {
             return;
         }
 
-        document.getElementById('manualDidInput').disabled='true';
+        didInput.disabled='true';
 
         const privateKey = generateSecp256k1PrivateKey()
 
